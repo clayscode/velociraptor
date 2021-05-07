@@ -220,7 +220,22 @@ func (self *_ParseStringWithRegexFunction) Call(ctx context.Context,
 						key = names[idx]
 					}
 
-					row.Set(key, string(submatch))
+					entry,_ := row.Get(key)
+					switch entry.(type) {
+
+					case string:
+						{
+							submatch_list := []string{entry.(string), string(submatch)}
+							row.Set(key, submatch_list)
+						}
+					case []string:
+						{
+							entry = append(entry.([]string), string(submatch))
+							row.Set(key, entry)
+						}
+					default:
+						row.Set(key, string(submatch))
+					}
 				}
 			}
 		}
